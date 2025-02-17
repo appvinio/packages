@@ -16,8 +16,7 @@ import 'route.dart';
 import 'state.dart';
 
 /// GoRouter implementation of [RouterDelegate].
-class GoRouterDelegate extends RouterDelegate<RouteMatchList>
-    with ChangeNotifier {
+class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifier {
   /// Constructor for GoRouter's implementation of the RouterDelegate base
   /// class.
   GoRouterDelegate({
@@ -68,8 +67,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     if (lastRoute.onExit != null && navigatorKey.currentContext != null) {
       return !(await lastRoute.onExit!(
         navigatorKey.currentContext!,
-        currentConfiguration.last
-            .buildState(_configuration, currentConfiguration),
+        currentConfiguration.last.buildState(_configuration, currentConfiguration),
       ));
     }
 
@@ -102,16 +100,13 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   NavigatorState? _findCurrentNavigator() {
     NavigatorState? state;
-    state =
-        navigatorKey.currentState; // Set state directly without canPop check
+    state = navigatorKey.currentState; // Set state directly without canPop check
 
     RouteMatchBase walker = currentConfiguration.matches.last;
     while (walker is ShellRouteMatch) {
-      final NavigatorState potentialCandidate =
-          walker.navigatorKey.currentState!;
+      final NavigatorState potentialCandidate = walker.navigatorKey.currentState!;
 
-      final ModalRoute<dynamic>? modalRoute =
-          ModalRoute.of(potentialCandidate.context);
+      final ModalRoute<dynamic>? modalRoute = ModalRoute.of(potentialCandidate.context);
       if (modalRoute == null || !modalRoute.isCurrent) {
         // Stop if there is a pageless route on top of the shell route.
         break;
@@ -125,8 +120,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     return state;
   }
 
-  bool _handlePopPageWithRouteMatch(
-      Route<Object?> route, Object? result, RouteMatchBase match) {
+  bool _handlePopPageWithRouteMatch(Route<Object?> route, Object? result, RouteMatchBase match) {
     if (route.willHandlePopInternally) {
       final bool popped = route.didPop(result);
       assert(!popped);
@@ -149,6 +143,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       );
       if (onExitResult) {
         _completeRouteMatch(result, match);
+      } else {
+        _revertRouteMatch(route);
       }
     });
     return false;
@@ -164,6 +160,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
 
   void _completeRouteMatch(Object? result, RouteMatchBase match) {
     RouteMatchBase walker = match;
+
     while (walker is ShellRouteMatch) {
       walker = walker.matches.last;
     }
@@ -180,10 +177,17 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     _debugAssertMatchListNotEmpty();
   }
 
+  void _revertRouteMatch(Route<Object?> route) {
+    if (route is PredictiveBackRoute) {
+      // Have no idea why needs to cast to PredictiveBackRoute after `is` check
+      (route as PredictiveBackRoute).handleUpdateBackGestureProgress(progress: 0.0);
+    }
+  }
+
   /// The top [GoRouterState], the state of the route that was
   /// last used in either [GoRouter.go] or [GoRouter.push].
-  GoRouterState get state => currentConfiguration.last
-      .buildState(_configuration, currentConfiguration);
+  GoRouterState get state =>
+      currentConfiguration.last.buildState(_configuration, currentConfiguration);
 
   /// For use by the Router architecture as part of the RouterDelegate.
   GlobalKey<NavigatorState> get navigatorKey => _configuration.navigatorKey;
@@ -237,8 +241,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       );
       int indexOfFirstDiff = 0;
       for (; indexOfFirstDiff < compareUntil; indexOfFirstDiff++) {
-        if (currentGoRouteMatches[indexOfFirstDiff] !=
-            newGoRouteMatches[indexOfFirstDiff]) {
+        if (currentGoRouteMatches[indexOfFirstDiff] != newGoRouteMatches[indexOfFirstDiff]) {
           break;
         }
       }
