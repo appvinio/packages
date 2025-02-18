@@ -179,8 +179,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
 
   void _revertRouteMatch(Route<Object?> route) {
     if (route is PredictiveBackRoute) {
-      // Have no idea why needs to cast to PredictiveBackRoute after `is` check
-      (route as PredictiveBackRoute).handleUpdateBackGestureProgress(progress: 0.0);
+      final PredictiveBackRoute predictiveRoute =  route as PredictiveBackRoute;
+      predictiveRoute.handleUpdateBackGestureProgress(progress: 1.0);
     }
   }
 
