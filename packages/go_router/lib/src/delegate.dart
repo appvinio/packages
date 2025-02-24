@@ -16,7 +16,8 @@ import 'route.dart';
 import 'state.dart';
 
 /// GoRouter implementation of [RouterDelegate].
-class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifier {
+class GoRouterDelegate extends RouterDelegate<RouteMatchList>
+    with ChangeNotifier {
   /// Constructor for GoRouter's implementation of the RouterDelegate base
   /// class.
   GoRouterDelegate({
@@ -67,7 +68,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     if (lastRoute.onExit != null && navigatorKey.currentContext != null) {
       return !(await lastRoute.onExit!(
         navigatorKey.currentContext!,
-        currentConfiguration.last.buildState(_configuration, currentConfiguration),
+        currentConfiguration.last
+            .buildState(_configuration, currentConfiguration),
       ));
     }
 
@@ -100,13 +102,16 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
 
   NavigatorState? _findCurrentNavigator() {
     NavigatorState? state;
-    state = navigatorKey.currentState; // Set state directly without canPop check
+    state =
+        navigatorKey.currentState; // Set state directly without canPop check
 
     RouteMatchBase walker = currentConfiguration.matches.last;
     while (walker is ShellRouteMatch) {
-      final NavigatorState potentialCandidate = walker.navigatorKey.currentState!;
+      final NavigatorState potentialCandidate =
+          walker.navigatorKey.currentState!;
 
-      final ModalRoute<dynamic>? modalRoute = ModalRoute.of(potentialCandidate.context);
+      final ModalRoute<dynamic>? modalRoute =
+          ModalRoute.of(potentialCandidate.context);
       if (modalRoute == null || !modalRoute.isCurrent) {
         // Stop if there is a pageless route on top of the shell route.
         break;
@@ -120,7 +125,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
     return state;
   }
 
-  bool _handlePopPageWithRouteMatch(Route<Object?> route, Object? result, RouteMatchBase match) {
+  bool _handlePopPageWithRouteMatch(
+      Route<Object?> route, Object? result, RouteMatchBase match) {
     if (route.willHandlePopInternally) {
       final bool popped = route.didPop(result);
       assert(!popped);
@@ -179,15 +185,15 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
 
   void _revertRouteMatch(Route<Object?> route) {
     if (route is PredictiveBackRoute) {
-      final PredictiveBackRoute predictiveRoute =  route as PredictiveBackRoute;
+      final PredictiveBackRoute predictiveRoute = route as PredictiveBackRoute;
       predictiveRoute.handleUpdateBackGestureProgress(progress: 1.0);
     }
   }
 
   /// The top [GoRouterState], the state of the route that was
   /// last used in either [GoRouter.go] or [GoRouter.push].
-  GoRouterState get state =>
-      currentConfiguration.last.buildState(_configuration, currentConfiguration);
+  GoRouterState get state => currentConfiguration.last
+      .buildState(_configuration, currentConfiguration);
 
   /// For use by the Router architecture as part of the RouterDelegate.
   GlobalKey<NavigatorState> get navigatorKey => _configuration.navigatorKey;
@@ -241,7 +247,8 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList> with ChangeNotifie
       );
       int indexOfFirstDiff = 0;
       for (; indexOfFirstDiff < compareUntil; indexOfFirstDiff++) {
-        if (currentGoRouteMatches[indexOfFirstDiff] != newGoRouteMatches[indexOfFirstDiff]) {
+        if (currentGoRouteMatches[indexOfFirstDiff] !=
+            newGoRouteMatches[indexOfFirstDiff]) {
           break;
         }
       }
