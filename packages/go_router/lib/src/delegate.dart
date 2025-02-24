@@ -82,6 +82,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       return true;
     }
     RouteMatchBase walker = currentConfiguration.matches.last;
+
     while (walker is ShellRouteMatch) {
       if (walker.navigatorKey.currentState?.canPop() ?? false) {
         return true;
